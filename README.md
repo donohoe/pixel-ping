@@ -3,7 +3,7 @@ A basic WordPress plugin to capture basic Page Views in a privacy-forward way.
 
 ## Overview
 
-This is intended as a light-weight pixel tracker. Its not that light-weight in that it requires WordPress but you can't have everything.
+This is intended as a light-weight pixel tracker. Its not that light-weight in that it requires WordPress but you can't have everything. The image it loads is about 260 bytes in size fr the network request and payload.
 
 It relies on WP's transients and minimizes reads/write to the filesystem.
 
@@ -29,11 +29,11 @@ Add this as the SRC for an IMAGE and append the URL of the page you want to trac
 
 Example:
 
-`https://example.com/pixel.js?u=https://something.example.com/hello.html`
+`https://example.com/pixel.png?u=https://something.example.com/hello.html`
 
 So...
 
-`<img src="https://example.com/pixel.js?u=https://something.example.com/hello.html"/>`
+`<img src="https://example.com/pixel.png?u=https://something.example.com/hello.html"/>`
 
 As image is loaded a counter is incremented. This is stored in WordPress's transient cache. It is written to the filesystem after subsequent calls to minimize read/writes. A cron job is scheduled to ensure that counts are not lost of you are experience low traffic.
 
