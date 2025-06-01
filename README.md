@@ -1,49 +1,37 @@
 # Pixel-Ping
-A basic WordPress plugin to capture basic Page Views in a privacy-forward way.
+
+A lightweight WordPress plugin for capturing basic page views in a privacy-forward way.
 
 ## Overview
 
-This is intended as a light-weight pixel tracker. Its not that light-weight in that it requires WordPress but you can't have everything. The image it loads is about 260 bytes in size fr the network request and payload.
+Pixel-Ping is designed as a minimal pixel tracker. While it does require WordPress, it keeps overhead low. The tracking image is a 1x1 transparent PNG, with the full network request and payload totaling about 260 bytes.
 
-It relies on WP's transients and minimizes reads/write to the filesystem.
+It uses WordPress transients to limit read/write operations, storing aggregate event data in JSON files organized by year and month. A background process periodically aggregates this data into a CSV.
 
-Aggregate event data is saved in JSON files that are broken down by year and month. Periodically a background function runs to aggregate them into a CSV.
-
-While the original use-case is to track values like a URL, it can be used with anything as they key.
+While the primary use case is tracking URLs, any string key can be tracked.
 
 ## Usage
 
-This is intended as a light-weight pixel tracker. Its not that light-weight in that it requires WordPress but you can't have everything.
-
-It relies on WP's transients and minimizes reads/write to the filesystem.
-
-Aggregate event data is saved in JSON files that are broken down by year and month. Periodically a background function runs to aggregate them into a CSV.
-
-After activating the plugin, you will not be able to load a small transparent 1x1 PNG image on your domain:
+After activating the plugin, a transparent 1x1 PNG becomes available at:
 
 `https://example.com/pixel.png`
 
-This in itself will not do anything.
-
-Add this as the SRC for an IMAGE and append the URL of the page you want to track.
+On its own, this does nothing. To track a page view, embed it as an image and append the target URL or key as a query parameter.
 
 Example:
 
-`https://example.com/pixel.png?u=https://something.example.com/hello.html`
+```html
+<img src="https://example.com/pixel.png?u=https://something.example.com/hello.html"/>
 
-So...
-
-`<img src="https://example.com/pixel.png?u=https://something.example.com/hello.html"/>`
-
-As image is loaded a counter is incremented. This is stored in WordPress's transient cache. It is written to the filesystem after subsequent calls to minimize read/writes. A cron job is scheduled to ensure that counts are not lost of you are experience low traffic.
+Each time the image is loaded, a counter is incremented. Data is first stored in WordPress's transient cache, then periodically written to disk to reduce I/O. A cron job ensures counts are flushed even if traffic is low.
 
 ## Data
 
-Data is saved long-term in JSON files that correspond to the year and month of the event. As data is stored temporarily in cache, these numbers can lag the actual figures by minutes or a day depending on site traffic volume.
+Long-term data is stored in JSON files, grouped by year and month. Since data is cached temporarily, there may be a delay of several minutes to a day depending on site traffic.
 
-Data also includes the referring domain if available.
+If available, the referring domain is also recorded.
 
 ## Privacy
 
-This does not track, collect, or store any personal information. It accepts a key, trackes the number of calls against it in aggergate, and the referring domain. Thats pretty much it. No last four digits of your SSN required.
+Pixel-Ping does not track, collect, or store personal information. It logs only a key (such as a URL), the number of requests, and the referring domain. No user identifiers, IPs, or personal data are stored. Thats pretty much it. No last four digits of your SSN required.
 
